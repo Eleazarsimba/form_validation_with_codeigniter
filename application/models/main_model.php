@@ -1,9 +1,9 @@
 <?php 
     class Main_model extends CI_Model
     {
-        function text_c()
+        function insert_data($data)
         {
-            echo 'hello';
+            $this->db->insert('allusers', $data);
         }
     }
 ?>

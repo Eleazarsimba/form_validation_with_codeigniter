@@ -31,6 +31,11 @@ class Home extends CI_Controller {
 		$this->load->view('signin');
 	}
 
+	public function inserted()
+	{
+		$this->load->view('inserted');
+	}
+
 	public function register_user()
 	{
 		$this->load->library('form_validation');
@@ -44,7 +49,17 @@ class Home extends CI_Controller {
 		if ($this->form_validation->run() == TRUE)
 		{
 			//if no error
-			echo "Success";
+			$this->load->model('main_model');
+			$data = array(
+				'Email' => $this->input->post('email'),
+				'First_Name' => $this->input->post('f_name'),
+				'Last_Name' => $this->input->post('l_name'),
+				'Password' => password_hash($this->input->post('psw'), PASSWORD_DEFAULT)
+			);
+			$this->main_model->insert_data($data);
+
+			redirect(base_url() . 'home/inserted');
+
 		}
 		else
 		{
