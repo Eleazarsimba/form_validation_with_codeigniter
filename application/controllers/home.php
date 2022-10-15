@@ -22,20 +22,29 @@ class Home extends CI_Controller {
 	{
 		$this->load->view('homepage');
 	}
+
+	//show sign up view
 	public function signup()
 	{
 		$this->load->view('signup');
 	}
+
+	//show sign in view
 	public function signin()
 	{
 		$this->load->view('signin');
 	}
 
+	//show data inserted
 	public function inserted()
 	{
-		$this->load->view('inserted');
+		$this->load->model('main_model');
+
+		$result['data']=$this->main_model->fetch_records();
+		$this->load->view('inserted', $result);
 	}
 
+	//register new user
 	public function register_user()
 	{
 		$this->load->library('form_validation');
@@ -48,7 +57,7 @@ class Home extends CI_Controller {
 
 		if ($this->form_validation->run() == TRUE)
 		{
-			//if no error
+			//if no error insert to database
 			$this->load->model('main_model');
 			$data = array(
 				'Email' => $this->input->post('email'),
@@ -68,6 +77,7 @@ class Home extends CI_Controller {
 		}
 	}
 
+	//login an exiting user
 	public function login_user()
 	{
 		$this->load->library('form_validation');
@@ -84,6 +94,20 @@ class Home extends CI_Controller {
 		{
 			//if there is an error
 			$this->signin();
+		}
+	}
+
+	/*Delete Record*/
+	public function deletedata()
+	{
+		$email=$this->input->get('Email');
+		$this->load->model('main_model');
+		$response=$this->main_model->deleterecords($email);
+		if($response==true){
+			echo "Data deleted successfully !";
+		}
+		else{
+			echo "Error !";
 		}
 	}
 }
