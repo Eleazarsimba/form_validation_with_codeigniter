@@ -208,4 +208,11 @@ class Home extends CI_Controller {
 	{
 		$this->load->view('send_email');
 	}
+
+	//consume email api
+	public function consume_email()
+	{
+		$this->load->view('send-mail-api');
+	}
+
 }
