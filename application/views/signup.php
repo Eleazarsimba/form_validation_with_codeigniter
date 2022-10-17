@@ -99,7 +99,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             color: #ff0000;
             font-size: 12px;
         }
+
+        /* available email */
+        #email_result{
+            font-size: 12px;
+        }
 	</style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="<?php echo base_url("assets/bootstrap/css/bootstrap.css"); ?>" />
+
 </head>
 <body>
 
@@ -110,9 +118,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <p>Please fill in this form to create an account.</p>
         <hr>
 
+        <span class="text-danger error-infor"><?php echo $this->session->flashdata('message'); ?></span>
+        <br />
+
         <label for="email" class="inputrequired"><b>Email </b></label>
-        <input type="text" placeholder="Enter Email" name="email">
+        <input type="text" placeholder="Enter Email" name="email" id="email">
         <span class="text-danger error-infor"><?php echo form_error("email"); ?></span>
+        <span id="email_result"></span>  
+           <br /><br /> 
 
         <label for="f_name" class="inputrequired"><b>First Name </b></label>
         <input type="text" placeholder="Enter First Name" name="f_name">
@@ -146,3 +159,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 </body>
 </html>
+
+<script>
+    $(document).ready(function(){ 
+      $('#email').change(function(){  
+           var email = $('#email').val();  
+           if(email != '')  
+           {  
+                $.ajax({  
+                     url:"<?php echo base_url(); ?>home/check_email_avalibility",  
+                     method:"POST",  
+                     data:{email:email},  
+                     success:function(data){  
+                          $('#email_result').html(data);  
+                     }  
+                });  
+           }  
+      });  
+ });  
+</script>

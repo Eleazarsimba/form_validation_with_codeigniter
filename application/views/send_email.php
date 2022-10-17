@@ -4,17 +4,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Login to your account</title>
+	<title>Create an account</title>
 
 	<style type="text/css">
-        @media screen and (min-width: 700px) {
+        @media screen and (min-width: 800px) {
             #container {
                 margin: 5px 150px 0px 150px;
                 border: 1px solid #D0D0D0;
                 box-shadow: 0 0 8px #D0D0D0;
             }
         }
-        @media screen and (max-width: 700px) {
+        @media screen and (max-width: 800px) {
             #container {
                 margin: 2px 20px 0px 20px;
                 border: 1px solid #D0D0D0;
@@ -25,10 +25,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         body {
             font-family: Arial, Helvetica, sans-serif;
         }
-        * {box-sizing: border-box}
+        * {
+            box-sizing: border-box
+        }
 
         /* Full-width input fields */
-        input[type=text], input[type=password] {
+        input[type=text] {
             width: 100%;
             padding: 15px;
             margin: 5px 0 5px 0;
@@ -37,15 +39,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             background: #f1f1f1;
         }
 
-        input[type=text]:focus, input[type=password]:focus {
+        input[type=text]:focus {
             background-color: #ddd;
             outline: none;
         }
 
-        hr {
-            border: 1px solid #f1f1f1;
-            margin-bottom: 25px;
-        }
 
         /* Set a style for all buttons */
         button {
@@ -63,7 +61,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             opacity:1;
         }
         /* Float cancel and signup buttons and add an equal width */
-        .signinbtn {
+        .sendbtn {
             float: left;
             width: 50%;
         }
@@ -82,7 +80,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         /* Change styles for cancel button and signup button on extra small screens */
         @media screen and (max-width: 300px) {
-        .signinbtn {
+        .signupbtn {
             width: 100%;
         }
         }
@@ -92,50 +90,66 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             content:"*";
             color: #ff0000;
         }
-        /*style error box */
-        .error-infor{
-            color: #ff0000;
-            font-size: 12px;
-        }
 	</style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="<?php echo base_url("assets/bootstrap/css/bootstrap.css"); ?>" />
+
 </head>
 <body>
 
 <div id="container">
-    <form method="post" action="<?php echo base_url()?>home/login_user" style="border:1px solid #ccc">
+    <form method="post" id="sendemail" style="border:1px solid #ccc">
     <div class="container">
-        <h1>Sign In</h1>
-        <p>Please enter your details to sign in.</p>
-        <hr>
+        <h1>Send email</h1>
 
         <label for="email" class="inputrequired"><b>Email </b></label>
-        <input type="text" placeholder="Enter Email" name="email">
-        <span class="text-danger error-infor"><?php echo form_error("email"); ?></span>
-
-        <label for="psw" class="inputrequired"><b>Password </b></label>
-        <input type="password" placeholder="Enter Password" name="psw">
-        <span class="text-danger error-infor"><?php echo form_error("psw"); ?></span>
+        <input type="text" placeholder="Enter Email" name="email" id="email">
         
-        <label>
-            <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
-        </label>
-
         <div class="clearfix">
-            <button type="submit" class="signinbtn">Sign In</button>
-        </div>
-        <span class="text-danger error-infor"><?php echo $this->session->flashdata('error'); ?></span>
-
-        <div>
-            <p>Do not have an account, <a href="<?php echo base_url(); ?>home/signup" style="color:dodgerblue">SIGN UP </a></p>
+            <button type="submit" class="sendbtn">Send mail</button>
         </div>
     </div>
     </form>
 </div>
 
 </body>
+</html>
 
 <script>
-    
+    $(document).ready(function(){ 
+    //   $('#email').change(function(){  
+    //        var email = $('#email').val();  
+    //        if(email != '')  
+    //        {  
+    //             $.ajax({  
+    //                  url:"https://send-email-for-ofisho-app.herokuapp.com/',  
+    //                  type:"POST",  
+    //                  data:{email:email},  
+    //                  success:function(data){  
+    //                       echo 'Email send'  
+    //                  }  
+    //             });  
+    //        }  
+    //   });  
+
+      $('#sendemail').on('submit', function(event){
+
+            event.preventDefault();
+
+            $('#email').change(function(){  
+            var email = $('#email').val();  
+            if(email != '') 
+            {
+                $.ajax({
+                    url:"https://send-email-for-ofisho-app.herokuapp.com/",
+                    method:"POST",
+                    data:$('#sample_form').serialize(),
+                    dataType:"JSON",
+                    success:function(data)
+                    {
+                        echo 'Email send';
+                    }
+                });
+            }
+ }); 
 </script>
-</html>

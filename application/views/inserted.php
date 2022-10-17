@@ -44,6 +44,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		}
 	?>
 	</table>
+
+	<p><a href="<?php echo base_url()?>home/logout">Logout</a></p>
 </div>
 
 </body>
