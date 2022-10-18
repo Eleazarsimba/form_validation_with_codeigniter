@@ -91,19 +91,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             color: #ff0000;
         }
 	</style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="<?php echo base_url("assets/bootstrap/css/bootstrap.css"); ?>" />
 
 </head>
 <body>
 
 <div id="container">
-    <form method="post" id="sendemail" style="border:1px solid #ccc">
+    <form method="post" action="<?php echo base_url()?>home/send_email_api" id="sendemail" style="border:1px solid #ccc">
     <div class="container">
         <h1>Send email</h1>
 
         <label for="email" class="inputrequired"><b>Email </b></label>
         <input type="text" placeholder="Enter Email" name="email" id="email">
+        <span class="text-danger error-infor"><?php echo form_error("email"); ?></span>
         
         <div class="clearfix">
             <button type="submit" class="sendbtn">Send mail</button>
@@ -114,42 +114,3 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 </body>
 </html>
-
-<script>
-    $(document).ready(function(){ 
-    //   $('#email').change(function(){  
-    //        var email = $('#email').val();  
-    //        if(email != '')  
-    //        {  
-    //             $.ajax({  
-    //                  url:"https://send-email-for-ofisho-app.herokuapp.com/',  
-    //                  type:"POST",  
-    //                  data:{email:email},  
-    //                  success:function(data){  
-    //                       echo 'Email send'  
-    //                  }  
-    //             });  
-    //        }  
-    //   });  
-
-      $('#sendemail').on('submit', function(event){
-
-            event.preventDefault();
-
-            $('#email').change(function(){  
-            var email = $('#email').val();  
-            if(email != '') 
-            {
-                $.ajax({
-                    url:"https://send-email-for-ofisho-app.herokuapp.com/",
-                    method:"POST",
-                    data:$('#sample_form').serialize(),
-                    dataType:"JSON",
-                    success:function(data)
-                    {
-                        echo 'Email send';
-                    }
-                });
-            }
- }); 
-</script>

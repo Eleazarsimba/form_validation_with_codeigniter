@@ -210,9 +210,42 @@ class Home extends CI_Controller {
 	}
 
 	//consume email api
-	public function consume_email()
+	public function send_email_api()
 	{
-		$this->load->view('send-mail-api');
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+		if ($this->form_validation->run() == TRUE)
+		{			
+			$data = array(
+				'email' => $this->input->post('email')
+			);
+
+			$data_to_send = json_encode($data);
+
+			$url = 'https://send-email-for-ofisho-app.herokuapp.com/';
+			$curl = curl_init();
+			
+			curl_setopt($curl, CURLOPT_URL, $url);
+			curl_setopt($curl, CURLOPT_POST, true);
+			curl_setopt($curl, CURLOPT_HTTPHEADER, ['content-type: application/json']);
+			curl_setopt($curl, CURLOPT_POSTFIELDS, $data_to_send);
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);// If there is no SSL Certificate
+
+			$result = curl_exec($curl);
+			$err = curl_error($curl);
+			if($err) {
+				echo 'Curl Error: ' . $err;
+			} else {
+				echo 'Message send';
+			}
+			curl_close($curl);
+		}
+		else
+		{
+			//if there is an error
+			$this->send_email();
+		}
 	}
 
 }
