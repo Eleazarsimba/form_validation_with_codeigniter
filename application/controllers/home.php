@@ -29,27 +29,6 @@ class Home extends CI_Controller {
 		$this->load->view('signup');
 	}
 
-	//show sign in view
-	public function signin()
-	{
-		$this->load->view('signin');
-	}
-
-	//show data inserted
-	public function inserted()
-	{
-		if($this->session->userdata('email') != '')
-		{
-			$this->load->model('main_model');
-
-			$result['data']=$this->main_model->fetch_records();
-			$this->load->view('inserted', $result);
-		}else
-		{
-			redirect(base_url() . 'home/signin');
-		}
-	}
-
 	//register new user
 	public function register_user()
 	{
@@ -69,7 +48,6 @@ class Home extends CI_Controller {
 			$this->load->model('main_model');
 
 			//encript password
-			// $verification_key = md5(rand());
 			$encrypted_password = md5($this->input->post('psw'));
 			
 			$data = array(
@@ -80,105 +58,67 @@ class Home extends CI_Controller {
 			);
 
 			//check if the email is already registerd
-				
-				//insert data to database
-				$this->main_model->insert_data($data);
+			if(!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL))  
+			{  
+				$this->session->set_flashdata('message', 'Invalid email');
+				$this->signup();
+			}  
+			else  
+			{  
+				 $this->load->model("main_model");  
+				 if($this->main_model->is_email_available($_POST["email"]))  
+				 {  
+					  $this->session->set_flashdata('message', 'Email is already registered');
+					  $this->signup();  
+				 }  
+				 else  
+				 {  
+					  //insert data to database
+						$this->main_model->insert_data($data);
+						$this->send_email_api();
 
-				//send email to the registerd user
-				$from_email = 'eleazarsimba3000@gmail.com';
-				$subject = "Account creation";
-				$message = "
-					<p>Hi ".$this->input->post('f_name')."</p>
-					<p>This is email your account creation. First you want to verify you email by click this <a href='".base_url()."register/verify_email/".$verification_key."'>link</a>.</p>
-					<p>Thanks,</p>
-					";
+						$session_data = array('email' => $this->input->post('email'));
+						$this->session->set_userdata($session_data);
 
-				$this->load->library('email');
+						//redirect to  homepage
+						redirect(base_url() . 'home/inserted');
 
-				// $this->email->set_newline("\r\n");
-				$this->email->from($from_email, 'Eleazar');
-				$this->email->to($this->input->post('email'));
-				$this->email->subject($subject);
-				$this->email->message($message);
-				if($this->email->send())
-				{
-					$this->session->set_flashdata('message', 'Email send');
-					$session_data = array('email' => $this->input->post('email'));
-					$this->session->set_userdata($session_data);
-					//redirect to  homepage
-					redirect(base_url() . 'home/inserted');
-				}
-				else{
-					$this->session->set_flashdata('message', 'Email send fail');
-					redirect(base_url() . 'home/signup');
-				}
-				
-			// }
+						//send email to the registerd user
+						// $from_email = 'eleazarsimba3000@gmail.com';
+						// $subject = "Account creation";
+						// $message = "
+						// 	<p>Hi ".$this->input->post('f_name')."</p>
+						// 	<p>This is email your account creation. First you want to verify you email by click this <a href='".base_url()."register/verify_email/".$verification_key."'>link</a>.</p>
+						// 	<p>Thanks,</p>
+						// 	";
+
+						// $this->load->library('email');
+
+						// // $this->email->set_newline("\r\n");
+						// $this->email->from($from_email, 'Eleazar');
+						// $this->email->to($this->input->post('email'));
+						// $this->email->subject($subject);
+						// $this->email->message($message);
+						// $this->send_email_api();
+						// if($this->email->send())
+						// {
+						// 	$this->session->set_flashdata('message', 'Email send');
+							// $session_data = array('email' => $this->input->post('email'));
+							// $this->session->set_userdata($session_data);
+							//redirect to  homepage
+							// redirect(base_url() . 'home/inserted');
+						// }
+						// else{
+						// 	$this->session->set_flashdata('message', 'Email send fail');
+						// 	redirect(base_url() . 'home/signup');
+						// }  
+				 }  
+			}				
 		}
 		else
 		{
 			//if there is an error
-			$this->session->set_flashdata('error', 'Error');
 			$this->signup();
-		}
-	}
-
-	//login an exiting user
-	public function login_user()
-	{
-		$this->load->library('form_validation');
-		$this->load->library('session');
-
-		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
-		$this->form_validation->set_rules('psw', 'Password', 'required');
-
-		if ($this->form_validation->run() == TRUE)
-		{
-			//if no error
-			$email = $this->input->post('email');
-			$password = md5($this->input->post('psw'));
-
-			$this->load->model('main_model');
-			//if login is a success
-			if($this->main_model->loginhere($email, $password))
-			{
-				$session_data = array('email' => $email);
-				$this->session->set_userdata($session_data);
-				//redirect to a page after login
-				redirect(base_url() . 'home/inserted');
-			}
-			else{
-				//if error in login
-				$this->session->set_flashdata('error', 'Invalid login details');
-				redirect(base_url() . 'home/signin');
-			}
-		}
-		else
-		{
-			//if there is an error
-			$this->signin();
-		}
-	}
-
-	//logout a user
-	public function logout()
-	{
-		$this->session->unset_userdata('email');
-		redirect(base_url() . 'home/signin');
-	}
-
-	/*Delete Record*/
-	public function deletedata()
-	{
-		$email=$this->input->get('Email');
-		$this->load->model('main_model');
-		$response=$this->main_model->deleterecords($email);
-		if($response==true){
-			echo "Data deleted successfully !";
-			$this->inserted();
-		}
-		else{
-			echo "Error !";
 		}
 	}
 
@@ -202,6 +142,87 @@ class Home extends CI_Controller {
                 }  
            }  
       }  
+
+	//show sign in view
+	public function signin()
+	{
+		$this->load->view('signin');
+	}
+
+	//login an exiting user
+	public function login_user()
+	{
+		$this->load->library('form_validation');
+		$this->load->library('session');
+
+		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+		$this->form_validation->set_rules('psw', 'Password', 'required');
+
+		if ($this->form_validation->run() == TRUE)
+		{
+			//if no error
+			$email = $this->input->post('email');
+			//encrypt password
+			$password = md5($this->input->post('psw'));
+
+			$this->load->model('main_model');
+			//if login is a success
+			if($this->main_model->loginhere($email, $password))
+			{
+				$session_data = array('email' => $email);
+				$this->session->set_userdata($session_data);
+				//redirect to a page after login
+				redirect(base_url() . 'home/inserted');
+			}
+			else{
+				//if error in login
+				$this->session->set_flashdata('error', 'Invalid login details');
+				redirect(base_url() . 'home/signin');
+			}
+		}
+		else
+		{
+			//if there is an error in form validation
+			$this->signin();
+		}
+	}
+
+	//logout a user
+	public function logout()
+	{
+		$this->session->unset_userdata('email');
+		redirect(base_url() . 'home/signin');
+	}
+
+	//show data inserted
+	public function inserted()
+	{
+		if($this->session->userdata('email') != '')
+		{
+			$this->load->model('main_model');
+
+			$result['data']=$this->main_model->fetch_records();
+			$this->load->view('inserted', $result);
+		}else
+		{
+			redirect(base_url() . 'home/signin');
+		}
+	}
+
+	/*Delete Record*/
+	public function deletedata()
+	{
+		$email=$this->input->get('Email');
+		$this->load->model('main_model');
+		$response=$this->main_model->deleterecords($email);
+		if($response==true){
+			echo "Data deleted successfully !";
+			$this->inserted();
+		}
+		else{
+			echo "Error !";
+		}
+	}
 
 	//show send email view
 	public function send_email()
@@ -246,6 +267,67 @@ class Home extends CI_Controller {
 			//if there is an error
 			$this->send_email();
 		}
+	}
+
+
+	//consume news api
+	// public function get_news()
+	// {
+	// 		$url = 'http://api.mediastack.com/v1/news?access_key=8137b743c25881df6500548cf5d2622d&categories=sports&languages=en';
+	// 		$curl = curl_init();
+			
+	// 		curl_setopt($curl, CURLOPT_URL, $url);
+	// 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+	// 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);// If there is no SSL Certificate
+
+	// 		$res = curl_exec($curl);
+	// 		$sports_news = json_decode($res, true);
+	// 		$this->load->view('get-sports-news', $sports_news);
+
+	// 		curl_close($curl);
+
+			// $i=1;
+			// 	foreach((array) $res as $row)
+			// 	{
+			// 		  echo "<tr>";
+			// 		  echo "<td>".$i."</td>";
+			// 		  echo "<td>".$row->title."</td>";
+			// 		  echo "<td>".$row->title."</td>";
+			// 		  echo "<td>".$row->title."</td>";
+			// 		  echo "<td>".$row->title."</td>";
+			// 		  echo "</tr>";
+			// 		  $i++;
+			// 	}
+			// $output = '';
+
+			// if(count($sports_news) > 0)
+			// {
+			// 	foreach($sports_news as $row)  
+			// 	{  
+			// 			$output .= '
+			// 			<tr>
+			// 				<td>'.$row->title.'</td>
+			// 				<td>'.$row->title.'</td>
+			// 				<td>'.$row->title.'</td>
+			// 				<td>'.$row->title.'</td>
+			// 			</tr>
+			// 			'; 
+			// 	} 
+			// }else
+			// {
+			// 	$output .= '
+			// 			<tr>
+			// 				<td colspan="4" align="center">No data found</td>
+			// 			</tr>
+			// 			';
+			// }
+			// echo  $sports_news;
+	// }
+
+	public function get_news()
+	{
+		$this->load->view('get-sports-news');
+		
 	}
 
 }
