@@ -59,6 +59,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <th>Title</th>
             <th>Source</th>
             <th>Category</th>
+            <th>Image</th>
         </tr>
     </thead>
     <tbody id="tabledb">
@@ -84,6 +85,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <td>${values.title}</td>
                     <td>${values.source}</td>
                     <td>${values.category}</td>
+                    <td><img src=${values.image} alt="No image" height=100 width=100></img></td>
                 </tr>`;
                 console.log(tableData)
             });
