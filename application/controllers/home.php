@@ -332,6 +332,9 @@ class Home extends CI_Controller {
 			
 			$this->main_model->updaterecords($first_name,$last_name,$email);
 			echo '<label class="text-success"><span class="glyphicon glyphicon-ok"></span> Record updated successfully !</label>'; 
+			echo "<script language=\"javascript\">
+				setTimeout(function(){window.location.href='inserted'}, 1000);
+			</script>";
 		}
 	}
 
