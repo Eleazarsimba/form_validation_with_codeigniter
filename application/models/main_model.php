@@ -13,6 +13,13 @@
             $query=$this->db->get("allusers");
             return $query;
         }
+
+         //fetch data
+         function fetch_data()
+         {
+             $query=$this->db->get("allusers");
+             return $query->result();
+         }
     
         //delete user by email
         function deleterecords($email)
@@ -51,5 +58,18 @@
                     return false;  
             }  
         }  
+
+        //display user by email
+        function displayuserByEmail($email)
+        {
+            $query=$this->db->query("select * from allusers where Email='".$email."'");
+            return $query->result();
+        }
+
+        /*Update*/
+        function updaterecords($first_name,$last_name,$email)
+        {
+            $query=$this->db->query("update allusers SET First_Name='$first_name',Last_Name='$last_name' where Email='$email'");
+        }
     }
 ?>

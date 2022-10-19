@@ -53,7 +53,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <body>
 
 <div id="container">
-<h2>World sports news</h2>
+<h2 style="padding-left: 20px">World sports news</h2>
 
 
 <table id="user_data" class="table table-bordered table-striped">

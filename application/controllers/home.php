@@ -290,10 +290,49 @@ class Home extends CI_Controller {
 			print_r($sports_news['sports']['data']);
 	}
 
+	//show get sports news view
 	public function get_news()
 	{
 		$this->load->view('get-sports-news');
 		
+	}
+	//show fetched data with ajax
+	public function fetched()
+	{
+		$this->load->model('main_model');
+
+		$data=$this->main_model->fetch_data();
+		$i=1;
+			foreach($data as $row)
+			{
+					echo "<tr>";
+					echo "<td>".$row->Email."</td>";
+					echo "<td>".$row->First_Name."</td>";
+					echo "<td>".$row->Last_Name."</td>";
+					echo "<td><a href='updatedata?Email=".$row->Email."'>Update</a></td>";
+
+					echo "</tr>";
+					$i++;
+			}
+	}
+
+	/*Update data*/
+	public function updatedata()
+	{
+		$email=$this->input->get('Email');
+		$this->load->model('main_model');
+
+		$result['data']=$this->main_model->displayuserByEmail($email);
+		$this->load->view('update_data',$result);
+
+		if($this->input->post('update'))
+		{
+			$first_name=$this->input->post('f_name');
+			$last_name=$this->input->post('l_name');
+			
+			$this->main_model->updaterecords($first_name,$last_name,$email);
+			echo '<label class="text-success"><span class="glyphicon glyphicon-ok"></span> Record updated successfully !</label>'; 
+		}
 	}
 
 }
