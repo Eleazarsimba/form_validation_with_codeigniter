@@ -271,58 +271,24 @@ class Home extends CI_Controller {
 
 
 	//consume news api
-	// public function get_news()
-	// {
-	// 		$url = 'http://api.mediastack.com/v1/news?access_key=8137b743c25881df6500548cf5d2622d&categories=sports&languages=en';
-	// 		$curl = curl_init();
+	public function news()
+	{
+			$url = 'http://api.mediastack.com/v1/news?access_key=8137b743c25881df6500548cf5d2622d&categories=sports&languages=en';
+			$curl = curl_init();
 			
-	// 		curl_setopt($curl, CURLOPT_URL, $url);
-	// 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-	// 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);// If there is no SSL Certificate
+			curl_setopt($curl, CURLOPT_URL, $url);
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);// If there is no SSL Certificate
 
-	// 		$res = curl_exec($curl);
-	// 		$sports_news = json_decode($res, true);
-	// 		$this->load->view('get-sports-news', $sports_news);
+			$res = curl_exec($curl);
+			
+			curl_close($curl);
+			
+			$sports_news['sports'] = json_decode($res, true);
+			$this->load->view('news', $sports_news);
 
-	// 		curl_close($curl);
-
-			// $i=1;
-			// 	foreach((array) $res as $row)
-			// 	{
-			// 		  echo "<tr>";
-			// 		  echo "<td>".$i."</td>";
-			// 		  echo "<td>".$row->title."</td>";
-			// 		  echo "<td>".$row->title."</td>";
-			// 		  echo "<td>".$row->title."</td>";
-			// 		  echo "<td>".$row->title."</td>";
-			// 		  echo "</tr>";
-			// 		  $i++;
-			// 	}
-			// $output = '';
-
-			// if(count($sports_news) > 0)
-			// {
-			// 	foreach($sports_news as $row)  
-			// 	{  
-			// 			$output .= '
-			// 			<tr>
-			// 				<td>'.$row->title.'</td>
-			// 				<td>'.$row->title.'</td>
-			// 				<td>'.$row->title.'</td>
-			// 				<td>'.$row->title.'</td>
-			// 			</tr>
-			// 			'; 
-			// 	} 
-			// }else
-			// {
-			// 	$output .= '
-			// 			<tr>
-			// 				<td colspan="4" align="center">No data found</td>
-			// 			</tr>
-			// 			';
-			// }
-			// echo  $sports_news;
-	// }
+			print_r($sports_news['sports']['data']);
+	}
 
 	public function get_news()
 	{

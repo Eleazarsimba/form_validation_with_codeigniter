@@ -26,17 +26,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             font-family: Arial, Helvetica, sans-serif;
         }
         * {
-            box-sizing: border-box
+            box-sizing: border-box;
         }
 
-        
+        /* styling datatable search field */
+        div.dataTables_filter > label > input {
+            margin-right: 20px
+        }
+                    
 	</style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
+
+    <script src = "https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src = "https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src = "https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+    <link rel = "stylesheet" href = "https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="<?php echo base_url("assets/bootstrap/css/bootstrap.css"); ?>" />
-    <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>            
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css" />  
 
 </head>
 <body>
@@ -62,27 +69,36 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 </body>
 <script>
-    fetch("http://api.mediastack.com/v1/news?access_key=8137b743c25881df6500548cf5d2622d&categories=sports&languages=en")
-    .then((data) => {
-        //convert to json
-        return data.json();
-    })
-    .then((objectData) => {
-        // console.log(objectData.data[0].title);
-        let tableData = "";
-        objectData.data.map((values) => {
-            tableData += `<tr>
-                <td>${values.author}</td>
-                <td>${values.title}</td>
-                <td>${values.source}</td>
-                <td>${values.category}</td>
-            </tr>`;
-            console.log(tableData)
-        });
-        document.getElementById("tabledb").innerHTML = tableData
-    })
-    .catch((err) => {
-        console.log(err)
-    })
+    $(document).ready(function () {
+        fetch("http://api.mediastack.com/v1/news?access_key=8137b743c25881df6500548cf5d2622d&categories=sports&languages=en")
+        .then((data) => {
+            //convert to json
+            return data.json();
+        })
+        .then((objectData) => {
+            // console.log(objectData.data[0].title);
+            let tableData = "";
+            objectData.data.map((values) => {
+                tableData += `<tr>
+                    <td>${values.author}</td>
+                    <td>${values.title}</td>
+                    <td>${values.source}</td>
+                    <td>${values.category}</td>
+                </tr>`;
+                console.log(tableData)
+            });
+            document.getElementById("tabledb").innerHTML = tableData
+            $(document).ready(function () {
+                $('#user_data').dataTable().css('padding', '2px');
+            });
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    });
+
+    // $(document).ready(function () {
+    //     $('#user_data').dataTable();
+    // });
 </script>
 </html>
