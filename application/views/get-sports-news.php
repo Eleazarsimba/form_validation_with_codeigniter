@@ -28,10 +28,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         * {
             box-sizing: border-box;
         }
-
+        /* styling the entire table */
+        #user_data_wrapper {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
         /* styling datatable search field */
         div.dataTables_filter > label > input {
-            margin-right: 20px
+            margin-right: 20px;
         }
                     
 	</style>
@@ -55,11 +59,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <table id="user_data" class="table table-bordered table-striped">
     <thead>
         <tr>
-            <th>Author</th>
-            <th>Title</th>
-            <th>Source</th>
-            <th>Category</th>
-            <th>Image</th>
+            <th width="20%">Author</th>
+            <th width="30%">Title</th>
+            <th width="20%">Source</th>
+            <th width="20%">Category</th>
+            <th width="10%">Image</th>
         </tr>
     </thead>
     <tbody id="tabledb">
@@ -81,26 +85,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             let tableData = "";
             objectData.data.map((values) => {
                 tableData += `<tr>
-                    <td>${values.author}</td>
-                    <td>${values.title}</td>
-                    <td>${values.source}</td>
-                    <td>${values.category}</td>
-                    <td><img src=${values.image} alt="No image" height=100 width=100></img></td>
+                    <td width="20%">${values.author}</td>
+                    <td width="30%">${values.title}</td>
+                    <td width="20%">${values.source}</td>
+                    <td width="20%">${values.category}</td>
+                    <td width="10%"><img src=${values.image} alt="No image" height=100 width=100></img></td>
                 </tr>`;
                 console.log(tableData)
             });
             document.getElementById("tabledb").innerHTML = tableData
             $(document).ready(function () {
-                $('#user_data').dataTable().css('padding', '2px');
+                $('#user_data').dataTable();
             });
         })
         .catch((err) => {
             console.log(err)
         })
     });
-
-    // $(document).ready(function () {
-    //     $('#user_data').dataTable();
-    // });
 </script>
 </html>
