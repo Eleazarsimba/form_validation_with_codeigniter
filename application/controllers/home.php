@@ -225,6 +225,9 @@ class Home extends CI_Controller {
 		$this->load->model('main_model');
 		$response=$this->main_model->deleterecords($email);
 		if($response==true){
+			if($this->session->userdata('email') == $email){
+				$this->session->unset_userdata('email');
+			}
 			echo "Data deleted successfully !";
 			$this->inserted();
 		}
@@ -357,7 +360,7 @@ class Home extends CI_Controller {
 		
 	}
 
-	//delete multiple items
+	//delete multiple items nb didn't work
 	public function delete_multiple()
 	{
 		$this->load->library('session');
@@ -386,7 +389,7 @@ class Home extends CI_Controller {
 		}
 	}
 
-	//show images view
+	//show gallery view
 	public function gallery()
 	{
 		$this->load->view('galler');
