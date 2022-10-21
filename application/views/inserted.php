@@ -21,6 +21,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <body>
 
 <div id="container">
+
+
 	<table width="600" cellspacing="5" cellpadding="5">
 	<tr style="background:#CCC">
 		<th>Email</th>
@@ -50,7 +52,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	?>
 	</table>
 
+
+
+
+
+
+
 	<p><a href="<?php echo base_url(); ?>home/logout">Logout</a></p>
+
+
+
+
+
 
 	<table width="600" cellspacing="5" cellpadding="5">
 		<thead>
@@ -64,10 +77,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<tbody id="tbody2">
 		</tbody>
 	</table>
+
+
 </div>
 
 </body>
 <script>
+	//fetch data from db
 	$.ajax({
 		url:"<?php echo base_url(); ?>home/fetched",
 		type: "POST",
@@ -77,5 +93,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			$('#tbody2').html(data);
 		}
 	});
+
 </script>
 </html>

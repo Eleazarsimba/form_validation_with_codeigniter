@@ -34,7 +34,7 @@ class Home extends CI_Controller {
 	{
 		$this->load->library('form_validation');
 		$this->load->library('session');
-		// $this->load->library('encryption');
+		$this->load->library('encryption');
 
 		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
 		$this->form_validation->set_rules('f_name', 'First Name', 'required|alpha');
@@ -48,7 +48,8 @@ class Home extends CI_Controller {
 			$this->load->model('main_model');
 
 			//encript password
-			$encrypted_password = md5($this->input->post('psw'));
+			// $encrypted_password = md5($this->input->post('psw'));
+			$encrypted_password = $this->encryption->encrypt($this->input->post('psw'));
 			
 			$data = array(
 				'Email' => $this->input->post('email'),
@@ -58,61 +59,53 @@ class Home extends CI_Controller {
 			);
 
 			//check if the email is already registerd
-			if(!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL))  
+			$this->load->model("main_model");  
+			if($this->main_model->is_email_available($_POST["email"]))  
 			{  
-				$this->session->set_flashdata('message', 'Invalid email');
-				$this->signup();
+				$this->session->set_flashdata('message', 'Email is already registered');
+				$this->signup();  
 			}  
 			else  
 			{  
-				 $this->load->model("main_model");  
-				 if($this->main_model->is_email_available($_POST["email"]))  
-				 {  
-					  $this->session->set_flashdata('message', 'Email is already registered');
-					  $this->signup();  
-				 }  
-				 else  
-				 {  
-					  //insert data to database
-						$this->main_model->insert_data($data);
-						$this->send_email_api();
+				//insert data to database
+				$this->main_model->insert_data($data);
+				$this->send_email_api();
 
-						$session_data = array('email' => $this->input->post('email'));
-						$this->session->set_userdata($session_data);
+				$session_data = array('email' => $this->input->post('email'));
+				$this->session->set_userdata($session_data);
 
-						//redirect to  homepage
-						redirect(base_url() . 'home/inserted');
+				//redirect to  homepage
+				redirect(base_url() . 'home/inserted');
 
-						//send email to the registerd user
-						// $from_email = 'eleazarsimba3000@gmail.com';
-						// $subject = "Account creation";
-						// $message = "
-						// 	<p>Hi ".$this->input->post('f_name')."</p>
-						// 	<p>This is email your account creation. First you want to verify you email by click this <a href='".base_url()."register/verify_email/".$verification_key."'>link</a>.</p>
-						// 	<p>Thanks,</p>
-						// 	";
+				//send email to the registerd user
+				// $from_email = 'eleazarsimba3000@gmail.com';
+				// $subject = "Account creation";
+				// $message = "
+				// 	<p>Hi ".$this->input->post('f_name')."</p>
+				// 	<p>This is email your account creation. First you want to verify you email by click this <a href='".base_url()."register/verify_email/".$verification_key."'>link</a>.</p>
+				// 	<p>Thanks,</p>
+				// 	";
 
-						// $this->load->library('email');
+				// $this->load->library('email');
 
-						// // $this->email->set_newline("\r\n");
-						// $this->email->from($from_email, 'Eleazar');
-						// $this->email->to($this->input->post('email'));
-						// $this->email->subject($subject);
-						// $this->email->message($message);
-						// $this->send_email_api();
-						// if($this->email->send())
-						// {
-						// 	$this->session->set_flashdata('message', 'Email send');
-							// $session_data = array('email' => $this->input->post('email'));
-							// $this->session->set_userdata($session_data);
-							//redirect to  homepage
-							// redirect(base_url() . 'home/inserted');
-						// }
-						// else{
-						// 	$this->session->set_flashdata('message', 'Email send fail');
-						// 	redirect(base_url() . 'home/signup');
-						// }  
-				 }  
+				// // $this->email->set_newline("\r\n");
+				// $this->email->from($from_email, 'Eleazar');
+				// $this->email->to($this->input->post('email'));
+				// $this->email->subject($subject);
+				// $this->email->message($message);
+				// $this->send_email_api();
+				// if($this->email->send())
+				// {
+				// 	$this->session->set_flashdata('message', 'Email send');
+					// $session_data = array('email' => $this->input->post('email'));
+					// $this->session->set_userdata($session_data);
+					//redirect to  homepage
+					// redirect(base_url() . 'home/inserted');
+				// }
+				// else{
+				// 	$this->session->set_flashdata('message', 'Email send fail');
+				// 	redirect(base_url() . 'home/signup');
+				// }   
 			}				
 		}
 		else
@@ -149,11 +142,24 @@ class Home extends CI_Controller {
 		$this->load->view('signin');
 	}
 
+	//show sign in view
+	public function tests()
+	{
+		$plain_text = 'a84828cb7a1aaf37b09ee0e13b575c386502c115784e9b54743b3b89249f6dda7737df6a41f8bd872d0500141c67d02b09dbf9aa9c8eaceb63af5e53e2d06d48RsPcpM3pdkYqfKurGpjzZM0tnunerHmEomSLLpL5jE0';
+		$ciphertext = $this->encryption->decrypt($plain_text);
+
+		// Outputs: This is a plain-text message!
+		// echo $this->encryption->encrypt($plain_text);
+		echo $ciphertext;
+	}
+
+
 	//login an exiting user
 	public function login_user()
 	{
 		$this->load->library('form_validation');
 		$this->load->library('session');
+		$this->load->library('encryption');
 
 		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
 		$this->form_validation->set_rules('psw', 'Password', 'required');
@@ -162,21 +168,23 @@ class Home extends CI_Controller {
 		{
 			//if no error
 			$email = $this->input->post('email');
-			//encrypt password
-			$password = md5($this->input->post('psw'));
+			//decrypt password
+			// $password = md5($this->input->post('psw'));
+			$password = $this->input->post('psw');
+
 
 			$this->load->model('main_model');
+			$result = $this->main_model->loginhere($email, $password);
+
 			//if login is a success
-			if($this->main_model->loginhere($email, $password))
+			if($result == '')
 			{
-				$session_data = array('email' => $email);
-				$this->session->set_userdata($session_data);
 				//redirect to a page after login
 				redirect(base_url() . 'home/inserted');
 			}
 			else{
 				//if error in login
-				$this->session->set_flashdata('error', 'Invalid login details');
+				$this->session->set_flashdata('error', $result);
 				redirect(base_url() . 'home/signin');
 			}
 		}
@@ -335,6 +343,45 @@ class Home extends CI_Controller {
 			echo "<script language=\"javascript\">
 				setTimeout(function(){window.location.href='inserted'}, 1000);
 			</script>";
+		}
+	}
+
+	//show get delete multiple view
+	public function deletemultiple()
+	{
+		$this->load->model('main_model');
+
+		$res['data']=$this->main_model->fetch_records();
+		$this->load->view('deletemultiple', $res);
+		
+	}
+
+	//delete multiple items
+	public function delete_multiple()
+	{
+		$this->load->library('session');
+		if(isset($_POST['delete_all']))
+		{
+			if(!empty($this->input->post('checkbox_value')))
+			{
+				$checkuser = $this->input->post('checkbox_value');
+				$checked_list = [];
+				foreach($checkuser as $row){
+					array_push($checked_list, $row);
+				}
+				print_r($checked_list[0]);
+				$this->load->model('main_model');
+				$this->main_model->deletemultiple($checked_list);
+
+				$this->session->set_flashdata('success', 'Records deleted');
+				redirect(base_url() . 'home/deletemultiple');
+			}
+			else
+			{
+				$this->session->set_flashdata('error', 'Select one or multiple elements');
+				redirect(base_url() . 'home/deletemultiple');
+
+			}
 		}
 	}
 

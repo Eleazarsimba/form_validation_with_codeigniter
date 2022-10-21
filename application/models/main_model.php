@@ -33,14 +33,30 @@
         function loginhere($email, $password)
         {
             $this->db->where("Email", $email);
-            $this->db->where("Password", $password);
+            // $this->db->where("Password", $password);
             $query = $this->db->get("allusers");
+
             if($query->num_rows() > 0)
             {
-                return true;
+                foreach($query->result() as $row)
+                {
+                  $this->load->library('session');
+                  $this->load->library('encryption');
+
+                  $store_password = $this->encryption->decrypt($row->Password);
+                  
+                  if($password == $store_password)
+                  {
+                    $this->session->set_userdata('email', $row->Email);
+                  }
+                  else
+                  {
+                    return 'Wrong password';
+                  } 
+                }
             }
             else{
-                return false;
+                return 'Wrong Email Address';
             }
         }
 
@@ -71,5 +87,14 @@
         {
             $query=$this->db->query("update allusers SET First_Name='$first_name',Last_Name='$last_name' where Email='$email'");
         }
+
+        //delete multiple items
+        function deletemultiple($checked_list)
+        {
+            $this->db->where("Email", $checked_list);
+            $this->db->delete("allusers");
+            return true;
+        }
+
     }
 ?>
