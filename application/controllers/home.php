@@ -18,6 +18,15 @@ class Home extends CI_Controller {
 	 * map to /index.php/welcome/<method_name>
 	 * @see https://codeigniter.com/user_guide/general/urls.html
 	 */
+
+
+	//public constructors
+	// public function __construct()
+	// {
+	// 	parent::__construct();
+	// 	$this->load->model('main_model');
+	// }
+
 	public function index()
 	{
 		$this->load->view('homepage');
@@ -413,6 +422,19 @@ class Home extends CI_Controller {
                      echo '<img src="'.base_url().'assets/'.$data["file_name"].'" width="300" height="225" class="img-thumbnail" />';  
                 }  
            }  
+	}
+
+
+	//show excell datatable
+	public function excel_table()
+	{
+		$this->load->view('excel-data');
+	}
+
+	//upload excel doc
+	public function upload_excel()
+	{
+		
 	}
 
 }
